@@ -26,10 +26,10 @@ int main(int argc, char ** argv) {
     }
 
     while (!g.getQuit()) {
-		if(g.kbhit()){
-		    switch(toupper(g.getKey())) {
-		        case 'E': type = EMPTY;
-		                  break;
+        if(g.kbhit()){
+	    switch(toupper(g.getKey())) {
+	        case 'E': type = EMPTY;
+		          break;
                 case 'C': type = CACTUS;
                           break;
                 case 'O': type = OASIS;
