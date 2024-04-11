@@ -4,7 +4,7 @@
 #include "Grid.h"
 #include "Square.h"
 using namespace std;
-
+// I love cookies
 const int SIZE = 1000;
 const int SIDE = 20;
 
