@@ -7,7 +7,16 @@ using namespace std;
 
 const int SIZE = 1000;
 const int SIDE = 20;
+const int DIM = SIZE / SIDE;
 
+void allToDefault(square s[][DIM]) {
+    int dim = SIZE / SIDE;
+    for (int r = 0; r < dim; r++) {
+        for (int c = 0; c < dim; c++) {
+                s[r][c].setType(EMPTY);
+        }
+    }
+}
 
 int main(int argc, char ** argv) {
 
@@ -15,21 +24,20 @@ int main(int argc, char ** argv) {
     SDL_Plotter g(SIZE,SIZE);
     grid _grid(SIZE, SIZE, SIDE, color(0,0,0));
     square sq1;
-    int dim = SIZE / SIDE;
-    square data [dim][dim];
+    square data[DIM][DIM];
 
     //Init Data
-    for (int r = 0; r < dim; r++) {
-        for (int c = 0; c < dim; c++) {
+    for (int r = 0; r < DIM; r++) {
+        for (int c = 0; c < DIM; c++) {
             data[r][c].setLoc(point(c * SIDE, r * SIDE));
         }
     }
 
     while (!g.getQuit()) {
-        if(g.kbhit()){
-	    switch(toupper(g.getKey())) {
-	        case 'E': type = EMPTY;
-		          break;
+		if(g.kbhit()){
+            switch(toupper(g.getKey())) {
+                case 'E': type = EMPTY;
+		                  break;
                 case 'C': type = CACTUS;
                           break;
                 case 'O': type = OASIS;
@@ -40,8 +48,8 @@ int main(int argc, char ** argv) {
                           break;
                 case 'H': type = HAWK;
                           break;
-                default: type = EMPTY;
-                         break;
+                case 'D': allToDefault(data);
+                          break;
 		    }
 		}
 
@@ -50,8 +58,8 @@ int main(int argc, char ** argv) {
 		    data[p.y/SIDE][p.x/SIDE].setType(type);
 		}
 
-		for (int r = 0; r < dim; r++) {
-            for (int c = 0; c < dim; c++) {
+		for (int r = 0; r < DIM; r++) {
+            for (int c = 0; c < DIM; c++) {
                 data[r][c].draw(g);
             }
 		}
