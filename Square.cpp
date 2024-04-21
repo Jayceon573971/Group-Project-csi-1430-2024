@@ -83,3 +83,10 @@ void square::draw(SDL_Plotter& g) {
         changed = false;
     }
 }
+void allToDefault(square s[][DIM]) {
+    for (int r = 0; r < DIM; r++) {
+        for (int c = 0; c < DIM; c++) {
+                s[r][c].setType(EMPTY);
+        }
+    }
+}

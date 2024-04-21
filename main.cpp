@@ -5,19 +5,6 @@
 #include "Square.h"
 using namespace std;
 
-const int SIZE = 1000;
-const int SIDE = 20;
-const int DIM = SIZE / SIDE;
-
-void allToDefault(square s[][DIM]) {
-    int dim = SIZE / SIDE;
-    for (int r = 0; r < dim; r++) {
-        for (int c = 0; c < dim; c++) {
-                s[r][c].setType(EMPTY);
-        }
-    }
-}
-
 int main(int argc, char ** argv) {
 
     TYPE type;
@@ -49,6 +36,7 @@ int main(int argc, char ** argv) {
                 case 'H': type = HAWK;
                           break;
                 case 'D': allToDefault(data);
+                          type = EMPTY;
                           break;
 		    }
 		}

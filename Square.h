@@ -4,6 +4,10 @@
 #include <ctime>
 
 enum TYPE{EMPTY, OASIS, CACTUS, RABBIT, SNAKE, HAWK};
+const int SIZE = 1000;
+const int SIDE = 20;
+const int DIM = SIZE / SIDE;
+
 
 class square {
 private:
@@ -28,5 +32,6 @@ public:
 
     void draw(SDL_Plotter& g);
 };
+void allToDefault(square s[][DIM]);
 
 #endif // SQUARE_H_INCLUDED
