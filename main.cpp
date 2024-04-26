@@ -7,18 +7,20 @@
 using namespace std;
 
 int main(int argc, char ** argv) {
-
     TYPE type;
     SDL_Plotter g(SIZE,SIZE);
     grid _grid(SIZE, SIZE, SIDE, color(0,0,0));
     bool started = false;
     square data[DIM][DIM];
-    int time = clock();
+    square temp[DIM][DIM];
+    int newR;
+    int newC;
 
     //Init Data
     for (int r = 0; r < DIM; r++) {
         for (int c = 0; c < DIM; c++) {
-            data[r][c].setLoc(point(c * SIDE, r * SIDE));
+            data[r][c].setCol(c);
+            data[r][c].setRow(r);
         }
     }
 
@@ -58,16 +60,52 @@ int main(int argc, char ** argv) {
 		    }
 		}
 
-		if(g.mouseClick() && !started){
-		    point p = (g.getMouseClick());
-		    data[p.y/SIDE][p.x/SIDE].setType(type);
+		if(!started){
+		    if (g.mouseClick()) {
+		        point p = (g.getMouseClick());
+		        data[p.y/SIDE][p.x/SIDE].setType(type);
+		    }
+		    for (int r = 0; r < DIM; r++) {
+                for (int c = 0; c < DIM; c++) {
+                    data[r][c].draw(g);
+                }
+		    }
 		}
+
+		else if (started) {
+            for (int r = 0; r < DIM; r++) {
+                for (int c = 0; c < DIM; c++) {
+                        if (data[r][c].getType() >= RABBIT) {
+                        cout << data[r][c].scan(data, r, c) << endl;
+                        newR = data[r][c].moveINY(data, r, c);
+                        newC = data[r][c].moveINX(data, r, c);
+
+                        temp[newR][newC] = data[r][c];
+                        temp[newR][newC].move(newR, newC);
+                        }
+                }
+            }
+            for (int r = 0; r < DIM; r++) {
+                for (int c = 0; c < DIM; c++) {
+                    if(data[r][c].getType() >= RABBIT) {
+                        data[r][c].setType(EMPTY);
+                        data[r][c].draw(g);
+                    }
+                }
+            }
 
           for (int r = 0; r < DIM; r++) {
             for (int c = 0; c < DIM; c++) {
+                if (temp[r][c].getType() >= RABBIT) {
+                    data[r][c] = temp[r][c];
+                    temp[r][c].setType(EMPTY);
+                }
                 data[r][c].draw(g);
             }
+          }
+          g.Sleep(300);
 		}
+
 		_grid.draw(g);
 		g.update();
 
