@@ -15,6 +15,7 @@ int main(int argc, char ** argv) {
     square temp[DIM][DIM];
     int newR;
     int newC;
+    int emptyCount = 0;
 
     //Init Data
     for (int r = 0; r < DIM; r++) {
@@ -75,14 +76,14 @@ int main(int argc, char ** argv) {
 		else if (started) {
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                        if (data[r][c].getType() >= RABBIT) {
+                    if (data[r][c].getType() >= RABBIT) {
                         cout << data[r][c].scan(data, r, c) << endl;
                         newR = data[r][c].moveINY(data, r, c);
                         newC = data[r][c].moveINX(data, r, c);
 
                         temp[newR][newC] = data[r][c];
                         temp[newR][newC].move(newR, newC);
-                        }
+                    }
                 }
             }
             for (int r = 0; r < DIM; r++) {
@@ -91,6 +92,11 @@ int main(int argc, char ** argv) {
                         data[r][c].setType(EMPTY);
                         data[r][c].draw(g);
                     }
+                }
+            }
+            for (int r = 0; r < DIM; r++) {
+                for (int c  = 0; c < DIM; c++) {
+                    temp[r][c].kill(temp, r, c);
                 }
             }
 
@@ -103,9 +109,26 @@ int main(int argc, char ** argv) {
                 data[r][c].draw(g);
             }
           }
-          g.Sleep(300);
+          g.Sleep(700);
+
+          // Check if board is empty, you can automatically move to prep phase
+          for (int r = 0; r < DIM; r++) {
+              for (int c = 0; c < DIM; c++) {
+                  if (data[r][c].getType() <= CACTUS) {
+                        emptyCount++;
+                  }
+              }
+          }
+
+		 if (emptyCount == (DIM * DIM)) {
+            allToDefault(data);
+            started = false;
+		 }
+		else {
+            emptyCount = 0;
 		}
 
+		}
 		_grid.draw(g);
 		g.update();
 

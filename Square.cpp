@@ -1,28 +1,15 @@
 #include "Square.h"
 square::square() {
     type = EMPTY;
-    loc.x = 0;
-    loc.y = 0;
-    prevLoc = loc;
     _color = color(186, 149, 97);
-    size = 20;
-    changed = true;
+    health = 0;
 }
 
 void square::setType(TYPE t) {
     type = t;
-    changed = true;
 }
 void square::setColor(color c) {
     _color = c;
-    changed = true;
-}
-void square::setLoc(point p) {
-    prevLoc = loc;
-    p.x = (p.x / size) * size;
-    p.y = (p.y / size) * size;
-    loc = p;
-    changed = true;
 }
 
 void square::setCol(int col) {
@@ -32,8 +19,8 @@ void square::setCol(int col) {
 void square::setRow(int row) {
     this -> row = row;
 }
-void square::setSize(int s) {
-    size = s;
+void square::setHealth(int h) {
+    h = health;
 }
 
 TYPE square::getType() const {
@@ -42,41 +29,48 @@ TYPE square::getType() const {
 color square::getColor() const {
     return _color;
 }
-point square::getLoc() const {
-    return loc;
+
+int square::getCol() const {
+    return col;
 }
 
-int square::getSize() const {
-    return size;
+int square::getRow() const {
+    return row;
 }
+
+int square::getHealth() const {
+    return health;
+}
+
 
 void square::draw(SDL_Plotter& g) {
     switch (type) {
         case EMPTY:
-            _color = color(186, 149, 97);
+            setColor(color(186, 149, 97));
             break;
         case OASIS:
-            _color = color(0, 255, 255);
+            setColor(color(0, 255, 255));
             break;
         case CACTUS:
-            _color = color(50, 150, 50);
+            setColor(color(50, 150, 50));
             break;
         case RABBIT:
-            _color = color(202, 192, 184);
+            setColor(color(202, 192, 184));
             break;
         case SNAKE:
-            _color = color(0, 0, 0);
+            setColor(color(0, 0, 0));
             break;
         case HAWK:
-            _color = color(255, 87, 51);
+            setColor(color(255, 87, 51));
             break;
         default:
-            _color = color(186, 149, 97);
+            setColor(color(186, 149, 97));
             break;
     }
+
     for (int r = 0; r < SIDE; r++) {
         for (int c = 0; c < SIDE; c++) {
-            g.plotPixel(c + SIDE * col, r + SIDE * row, _color);
+            g.plotPixel(c + SIDE * col, r + SIDE * row, getColor());
         }
     }
 }
@@ -99,12 +93,13 @@ string square::scan(square s[][DIM], int cr, int cc) {
                     tr = r;
                 }
             }
-            if ((other > targetRow) && (other < currType)) {
+            else if ((other > targetRow) && (other < currType)) {
                 targetRow = other;
                 tr = r;
             }
         }
     }
+
     for (int c = 0; c < DIM; c++) {
         if (c != cc) {
             TYPE other = s[cr][c].getType();
@@ -115,7 +110,7 @@ string square::scan(square s[][DIM], int cr, int cc) {
                     tc  = c;
                 }
             }
-            if ((other > targetCol) && (other < currType)) {
+            else if ((other > targetCol) && (other < currType)) {
                 targetCol = other;
                 tc = c;
             }
@@ -126,7 +121,6 @@ string square::scan(square s[][DIM], int cr, int cc) {
     if ((targetRow == EMPTY) && (targetCol == EMPTY)) {
             dir = "diagonal";
     }
-
     else if (targetRow > targetCol) {
         if (tr > cr) {
             dir = "down";
@@ -144,7 +138,7 @@ string square::scan(square s[][DIM], int cr, int cc) {
         }
     }
     else { // Same Type and Not EMPTY
-        if(abs(tc - cc) > abs(tr - cr)) {
+        if(abs(tc - cc) < abs(tr - cr)) {
             if (tc > cc) {
                 dir = "right";
             }
@@ -152,7 +146,7 @@ string square::scan(square s[][DIM], int cr, int cc) {
                 dir = "left";
             }
         }
-        else if (abs(tc - cc) < abs(tr - cr)) {
+        else if (abs(tc - cc) > abs(tr - cr)) {
             if (tr > cr) {
                 dir = "down";
             }
@@ -201,11 +195,17 @@ int square::moveINX(square s[][DIM], int cr, int cc) {
         else {
             newCol -= 1;
         }
+        if ((s[cr + 1][newCol].getType() != EMPTY)) {
+            newCol = cc;
+        }
+        if ((s[cr - 1][newCol].getType() != EMPTY)) {
+            newCol = cc;
+        }
     }
-    if ((newCol > DIM - 1) || (newCol < 0)) {
+    if ((newCol > (DIM - 1)) || (newCol < 0)) {
         newCol = cc;
     }
-    else if (s[cr][newCol].getType() != EMPTY) {
+    if (s[cr][newCol].getType() != EMPTY) {
         newCol = cc;
     }
     return newCol;
@@ -229,14 +229,19 @@ int square::moveINY(square s[][DIM], int cr, int cc) {
         else {
             newRow -= 1;
         }
+        if ((s[newRow][cc - 1].getType() != EMPTY)) {
+            newRow = cr;
+        }
+        if ((s[newRow][cc + 1].getType() != EMPTY)) {
+            newRow = cr;
+        }
     }
     if ((newRow > (DIM - 1)) || (newRow < 0)) {
         newRow = cr;
     }
-    else if (s[newRow][cc].getType() != EMPTY) {
+    if (s[newRow][cc].getType() != EMPTY) {
         newRow = cr;
     }
-
     return newRow;
 }
 
@@ -245,26 +250,53 @@ void square::move(int r, int c) {
     setCol(c);
     switch (type) {
         case EMPTY:
-            _color = color(186, 149, 97);
+            setColor(color(186, 149, 97));
             break;
         case OASIS:
-            _color = color(0, 255, 255);
+            setColor(color(0, 255, 255));
             break;
         case CACTUS:
-            _color = color(50, 150, 50);
+            setColor(color(50, 150, 50));
             break;
         case RABBIT:
-            _color = color(202, 192, 184);
+            setColor(color(202, 192, 184));
             break;
         case SNAKE:
-            _color = color(0, 0, 0);
+            setColor(color(0, 0, 0));
             break;
         case HAWK:
-            _color = color(255, 87, 51);
+            setColor(color(255, 87, 51));
             break;
         default:
-            _color = color(186, 149, 97);
+            setColor(color(186, 149, 97));
             break;
+    }
+}
+
+void square::kill(square s[][DIM], int cr, int cc) {
+    TYPE curr = s[cr][cc].getType();
+    TYPE target = EMPTY;
+    int tr = cr;
+    int tc = cc;
+    if (curr >= RABBIT) {
+        for (int r = cr - 1; r < cr + 2; r++) {
+            for (int c = cc - 1; c < cc + 2; c++) {
+                if (r != cr && c != cc) {
+                    TYPE other = s[r][c].getType();
+                    if ((other < curr) && (other > target)) {
+                        if (r < (DIM - 1) && (r > 0) && (c < (DIM - 1)) && (c > 0)) {
+                            target = other;
+                            tr = r;
+                            tc = c;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (tr != cr && tc != cc) {
+        s[tr][tc].setType(EMPTY);
     }
 }
 
@@ -272,6 +304,7 @@ void allToDefault(square s[][DIM]) {
     for (int r = 0; r < DIM; r++) {
         for (int c = 0; c < DIM; c++) {
                 s[r][c].setType(EMPTY);
+                s[r][c].setColor(color(186, 149, 97));
         }
     }
 }

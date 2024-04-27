@@ -15,33 +15,32 @@ class square {
 private:
     TYPE type;
     color _color;
-    point loc;
-    point prevLoc;
-    int size;
-    bool changed;
     int row;
     int col;
+    int health;
 public:
     square();
 
     void setType(TYPE);
     void setColor(color);
-    void setLoc(point);
-    void setSize(int);
     void setRow(int);
     void setCol(int);
+    void setHealth(int);
 
     TYPE getType() const;
     color getColor() const;
-    point getLoc() const;
-    int getSize() const;
+    int getRow() const;
+    int getCol() const;
+    int getHealth() const;
 
     void draw(SDL_Plotter& g);
     string scan(square[][DIM], int, int);
     int moveINX(square[][DIM], int, int);
     int moveINY(square[][DIM], int, int);
     void move(int, int);
+    void kill(square[][DIM], int, int);
 };
+
 void allToDefault(square s[][DIM]);
 
 #endif // SQUARE_H_INCLUDED
