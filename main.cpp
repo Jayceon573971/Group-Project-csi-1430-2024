@@ -100,6 +100,13 @@ int main(int argc, char ** argv) {
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
+                    if (data[r][c].getType() > OASIS) {
+                        data[r][c].reproduce(data, r, c);
+                    }
+                }
+            }
+            for (int r = 0; r < DIM; r++) {
+                for (int c = 0; c < DIM; c++) {
                         if (data[r][c].getType() >= RABBIT) {
                         //cout << data[r][c].scan(data, r, c) << endl;
                         newR = data[r][c].moveINY(data, r, c);

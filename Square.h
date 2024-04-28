@@ -41,6 +41,7 @@ public:
     int moveINY(square[][DIM], int, int);
     void move(int, int);
     void kill(square[][DIM], int, int);
+    void reproduce(square[][DIM], int, int);
     void reset();
 };
 
