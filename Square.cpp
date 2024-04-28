@@ -49,10 +49,21 @@ int square::getHealth() const {
 }
 
 
-void square::draw(SDL_Plotter& g) {
+void square::draw(SDL_Plotter& g, SEASON& season) {
     switch (type) {
         case EMPTY:
-            setColor(color(186, 149, 97));
+            if (season == SUMMER) {
+                setColor(color(186, 149, 97));
+            }
+            else if (season == FALL) {
+                setColor(color(166, 129, 77));
+            }
+            else if (season == WINTER) {
+                setColor(color(225, 222, 216));
+            }
+            else if (season == SPRING) {
+                setColor(color(118, 100, 61));
+            }
             break;
         case OASIS:
             setColor(color(0, 255, 255));
@@ -269,30 +280,90 @@ void square::move(int r, int c) {
 
 void square::kill(square s[][DIM], int cr, int cc) {
     TYPE curr = s[cr][cc].getType();
+    if (curr >= RABBIT) {
     TYPE target = EMPTY;
     int tr = cr;
     int tc = cc;
     bool success = false;
-        for (int r = cr - 1; r < cr + 2; r++) {
-            for (int c = cc - 1; c < cc + 2; c++) {
-                    if (r < (DIM - 1) && (r > 0) && (c < (DIM - 1)) && (c > 0)) {
-                        if ((r != cr) && (c != cc)) {
-                        TYPE other = s[r][c].getType();
-                        if ((other < curr) && (other > target)) {
-                            target = other;
-                            tr = r;
-                            tc = c;
-                            success = true;
-                        }
-                        }
-                    }
-            }
+    if ((s[cr -1][cc + 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
+        if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
+            target = s[cr -1][cc + 1].getType();
+            tr = cr -1;
+            tc = cc + 1;
+            success = true;
         }
+    }
+    if ((s[cr -1][cc].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
+        if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0)) {
+            target = s[cr -1][cc].getType();
+            tr = cr -1;
+            tc = cc;
+            success = true;
+        }
+    }
+    if ((s[cr -1][cc - 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
+        if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0) && ((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
+            target = s[cr -1][cc + 1].getType();
+            tr = cr -1;
+            tc = cc - 1;
+            success = true;
+        }
+    }
+    if (s[cr][cc - 1].getType() < curr && s[cr -1][cc - 1].getType() > target) {
+        if (((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
+            target = s[cr][cc - 1].getType();
+            tr = cr;
+            tc = cc - 1;
+            success = true;
+        }
+    }
+    if (s[cr + 1][cc - 1].getType() < curr && s[cr -1][cc - 1].getType() > target) {
+        if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
+            target = s[cr -1][cc - 1].getType();
+            tr = cr + 1;
+            tc = cc - 1;
+            success = true;
+        }
+    }
+    if ((s[cr + 1][cc].getType() < curr) && (s[cr + 1][cc].getType() > target)) {
+        if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc) < (DIM - 1)) && ((cc) > 0)) {
+            target = s[cr + 1][cc].getType();
+            tr = cr -1;
+            tc = cc;
+            success = true;
+        }
+    }
+    if ((s[cr + 1][cc + 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
+        if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
+            target = s[cr -1][cc + 1].getType();
+            tr = cr + 1;
+            tc = cc + 1;
+            success = true;
+        }
+    }
+    if ((s[cr][cc + 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
+        if ((cr) < (DIM - 1) && ((cr) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
+            target = s[cr -1][cc + 1].getType();
+            tr = cr;
+            tc = cc + 1;
+            success = true;
+        }
+    }
+    //cout << target << endl;
+
         if (success) {
             s[tr][tc].setType(EMPTY);
-            s[tr][tc].setHealth(0);
-            s[cr][cc].updateHealth(3);
+            if (target < RABBIT) {
+                s[cr][cc].updateHealth(2);
+            }
+            else if (target == RABBIT) {
+                s[cr][cc].updateHealth(5);
+            }
+            else if (target == SNAKE) {
+                s[cr][cc].updateHealth(7);
+            }
         }
+    }
 }
 void square::reset() {
     setHealth(0);

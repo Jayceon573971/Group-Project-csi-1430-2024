@@ -6,6 +6,7 @@
 #include <cstdlib>
 
 enum TYPE{EMPTY, OASIS, CACTUS, RABBIT, SNAKE, HAWK};
+enum SEASON {SUMMER, FALL, WINTER, SPRING};
 const int SIZE = 500;
 const int SIDE = 20;
 const int DIM = SIZE / SIDE;
@@ -34,7 +35,7 @@ public:
     int getCol() const;
     int getHealth() const;
 
-    void draw(SDL_Plotter& g);
+    void draw(SDL_Plotter& g, SEASON&);
     string scan(square[][DIM], int, int);
     int moveINX(square[][DIM], int, int);
     int moveINY(square[][DIM], int, int);
