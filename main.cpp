@@ -15,7 +15,6 @@ int main(int argc, char ** argv) {
     square temp[DIM][DIM];
     int newR;
     int newC;
-    int emptyCount = 0;
 
     //Init Data
     for (int r = 0; r < DIM; r++) {
@@ -69,66 +68,71 @@ int main(int argc, char ** argv) {
 		    for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     data[r][c].draw(g);
+                    if (data[r][c].getType() == RABBIT) {
+                        data[r][c].setHealth(15);
+                    }
+                    else if (data[r][c].getType() == SNAKE) {
+                        data[r][c].setHealth(17);
+                    }
+                    else if (data[r][c].getType() == HAWK) {
+                        data[r][c].setHealth(19);
+                    }
                 }
 		    }
 		}
 
 		else if (started) {
-            for (int r = 0; r < DIM; r++) {
+        for (int r = 0; r < DIM; r++) {
+            for (int c = 0; c < DIM; c++) {
+                    if (data[r][c].getType() >= RABBIT) {
+                        if(data[r][c].getHealth() == 0) {
+                            data[r][c].reset();
+                        }
+                    }
+            }
+        }
+         for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     if (data[r][c].getType() >= RABBIT) {
                         cout << data[r][c].scan(data, r, c) << endl;
                         newR = data[r][c].moveINY(data, r, c);
                         newC = data[r][c].moveINX(data, r, c);
-
                         temp[newR][newC] = data[r][c];
                         temp[newR][newC].move(newR, newC);
+                    }
+                    else if (data[r][c].getType() > EMPTY){
+                        temp[r][c] = data[r][c];
                     }
                 }
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     if(data[r][c].getType() >= RABBIT) {
-                        data[r][c].setType(EMPTY);
+                        data[r][c].reset();
                         data[r][c].draw(g);
                     }
                 }
             }
+
             for (int r = 0; r < DIM; r++) {
                 for (int c  = 0; c < DIM; c++) {
-                    temp[r][c].kill(temp, r, c);
+                    if (temp[r][c].getType() >= RABBIT) {
+                        temp[r][c].kill(temp, r, c);
+                    }
                 }
             }
 
-          for (int r = 0; r < DIM; r++) {
+        for (int r = 0; r < DIM; r++) {
             for (int c = 0; c < DIM; c++) {
-                if (temp[r][c].getType() >= RABBIT) {
                     data[r][c] = temp[r][c];
-                    temp[r][c].setType(EMPTY);
-                }
-                data[r][c].draw(g);
+                    temp[r][c].reset();
+                    data[r][c].draw(g);
+                    data[r][c].updateHealth(-1);
             }
-          }
-          g.Sleep(700);
+        }
+          g.Sleep(500);
 
-          // Check if board is empty, you can automatically move to prep phase
-          for (int r = 0; r < DIM; r++) {
-              for (int c = 0; c < DIM; c++) {
-                  if (data[r][c].getType() <= CACTUS) {
-                        emptyCount++;
-                  }
-              }
-          }
-
-		 if (emptyCount == (DIM * DIM)) {
-            allToDefault(data);
-            started = false;
-		 }
-		else {
-            emptyCount = 0;
-		}
-
-		}
+        }
 		_grid.draw(g);
 		g.update();
 

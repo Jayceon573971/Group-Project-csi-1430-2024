@@ -26,6 +26,7 @@ public:
     void setRow(int);
     void setCol(int);
     void setHealth(int);
+    void updateHealth(int);
 
     TYPE getType() const;
     color getColor() const;
@@ -39,6 +40,7 @@ public:
     int moveINY(square[][DIM], int, int);
     void move(int, int);
     void kill(square[][DIM], int, int);
+    void reset();
 };
 
 void allToDefault(square s[][DIM]);

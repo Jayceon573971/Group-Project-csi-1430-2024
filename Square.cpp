@@ -20,7 +20,13 @@ void square::setRow(int row) {
     this -> row = row;
 }
 void square::setHealth(int h) {
-    h = health;
+    health = h;
+}
+void square::updateHealth(int h) {
+    health += h;
+    if (health < 0) {
+        health = 0;
+    }
 }
 
 TYPE square::getType() const {
@@ -105,7 +111,7 @@ string square::scan(square s[][DIM], int cr, int cc) {
             TYPE other = s[cr][c].getType();
             if (other == currType) {
                 int r = rand();
-                if (r % 2 == 0) {
+                if (r % 5 == 0) {
                     targetCol = other;
                     tc  = c;
                 }
@@ -195,12 +201,6 @@ int square::moveINX(square s[][DIM], int cr, int cc) {
         else {
             newCol -= 1;
         }
-        if ((s[cr + 1][newCol].getType() != EMPTY)) {
-            newCol = cc;
-        }
-        if ((s[cr - 1][newCol].getType() != EMPTY)) {
-            newCol = cc;
-        }
     }
     if ((newCol > (DIM - 1)) || (newCol < 0)) {
         newCol = cc;
@@ -228,12 +228,6 @@ int square::moveINY(square s[][DIM], int cr, int cc) {
         }
         else {
             newRow -= 1;
-        }
-        if ((s[newRow][cc - 1].getType() != EMPTY)) {
-            newRow = cr;
-        }
-        if ((s[newRow][cc + 1].getType() != EMPTY)) {
-            newRow = cr;
         }
     }
     if ((newRow > (DIM - 1)) || (newRow < 0)) {
@@ -278,33 +272,38 @@ void square::kill(square s[][DIM], int cr, int cc) {
     TYPE target = EMPTY;
     int tr = cr;
     int tc = cc;
-    if (curr >= RABBIT) {
+    bool success = false;
         for (int r = cr - 1; r < cr + 2; r++) {
             for (int c = cc - 1; c < cc + 2; c++) {
-                if (r != cr && c != cc) {
-                    TYPE other = s[r][c].getType();
-                    if ((other < curr) && (other > target)) {
-                        if (r < (DIM - 1) && (r > 0) && (c < (DIM - 1)) && (c > 0)) {
+                    if (r < (DIM - 1) && (r > 0) && (c < (DIM - 1)) && (c > 0)) {
+                        if ((r != cr) && (c != cc)) {
+                        TYPE other = s[r][c].getType();
+                        if ((other < curr) && (other > target)) {
                             target = other;
                             tr = r;
                             tc = c;
+                            success = true;
+                        }
                         }
                     }
-                }
             }
         }
-    }
-
-    if (tr != cr && tc != cc) {
-        s[tr][tc].setType(EMPTY);
-    }
+        if (success) {
+            s[tr][tc].setType(EMPTY);
+            s[tr][tc].setHealth(0);
+            s[cr][cc].updateHealth(3);
+        }
+}
+void square::reset() {
+    setHealth(0);
+    setType(EMPTY);
 }
 
 void allToDefault(square s[][DIM]) {
     for (int r = 0; r < DIM; r++) {
         for (int c = 0; c < DIM; c++) {
-                s[r][c].setType(EMPTY);
-                s[r][c].setColor(color(186, 149, 97));
+            s[r][c].setType(EMPTY);
+            s[r][c].setColor(color(186, 149, 97));
         }
     }
 }
