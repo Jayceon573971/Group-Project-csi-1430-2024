@@ -86,28 +86,28 @@ int main(int argc, char ** argv) {
 		else if (started) {
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() >= RABBIT && data[r][c].getHealth() == 0) {
+                    if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE && data[r][c].getHealth() == 0) {
                         data[r][c].setType(EMPTY);
                     }
                 }
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() > OASIS) {
+                    if (data[r][c].getType() > RABBIT && data[r][c].getType() < SINKHOLE) {
                         data[r][c].kill(data, r, c);
                     }
                 }
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() > OASIS) {
+                    if (data[r][c].getType() >= RABBIT) {
                         data[r][c].reproduce(data, r, c);
                     }
                 }
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                        if (data[r][c].getType() >= RABBIT) {
+                        if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE) {
                         //cout << data[r][c].scan(data, r, c) << endl;
                         newR = data[r][c].moveINY(data, r, c);
                         newC = data[r][c].moveINX(data, r, c);
@@ -194,18 +194,19 @@ int main(int argc, char ** argv) {
                     }
 		        }
 		}
-		/*for (int r = 0; r < DIM; r++) {
+		for (int r = 0; r < DIM; r++) {
             for (int c = 0; c < DIM; c++) {
-                if (rand()%700 == 0) {
+                if (rand()%1000000 == 0) {
                     if (r < (DIM - 1) && (r > 0) && (c < (DIM - 1)) && (c > 0)) {
                         data[r-1][c].setType(SINKHOLE);
                         data[r-1][c+1].setType(SINKHOLE);
                         data[r][c+1].setType(SINKHOLE);
                         data[r][c].setType(SINKHOLE);
+                        cout << "ND" << endl;
                     }
                 }
             }
-		}*/
+		}
 		}
 
 		_grid.draw(g);

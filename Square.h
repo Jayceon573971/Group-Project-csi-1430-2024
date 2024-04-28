@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdlib>
 
-enum TYPE{EMPTY, OASIS, CACTUS, RABBIT, SNAKE, HAWK};
+enum TYPE{EMPTY, OASIS, CACTUS, RABBIT, SNAKE, HAWK, SINKHOLE};
 enum SEASON {SUMMER, FALL, WINTER, SPRING};
 const int SIZE = 500;
 const int SIDE = 20;

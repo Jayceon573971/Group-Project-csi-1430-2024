@@ -80,6 +80,9 @@ void square::draw(SDL_Plotter& g, SEASON& season) {
         case HAWK:
             setColor(color(255, 87, 51));
             break;
+        case SINKHOLE:
+            setColor(color(15, 11, 13));
+            break;
         default:
             setColor(color(186, 149, 97));
             break;
@@ -280,7 +283,7 @@ void square::move(int r, int c) {
 
 void square::kill(square s[][DIM], int cr, int cc) {
     TYPE curr = s[cr][cc].getType();
-    if (curr >= RABBIT) {
+    if (curr >= RABBIT && curr < SINKHOLE) {
     TYPE target = EMPTY;
     int tr = cr;
     int tc = cc;
@@ -373,7 +376,7 @@ void square::reproduce(square s [][DIM], int cr, int cc) {
     TYPE curr = s[cr][cc].getType();
     int emptyR = cr;
     int emptyC = cc;
-    if (curr > OASIS) {
+    if (curr > CACTUS) {
         bool found = false;
         if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
             if (s[cr -1][cc + 1].getType() == curr) {
@@ -465,9 +468,14 @@ void square::reproduce(square s [][DIM], int cr, int cc) {
                 s[emptyR][emptyC].setType(curr);
                 s[emptyR][emptyC].setHealth(10);
             }
+        else if (curr == HAWK) {
+            if (rand() %  5000 == 0) {
+                s[emptyR][emptyC].setType(curr);
+            }
         }
     }
     }
+}
 }
 
 void allToDefault(square s[][DIM]) {
