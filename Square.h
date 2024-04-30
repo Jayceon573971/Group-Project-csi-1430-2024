@@ -36,7 +36,7 @@ public:
     int getHealth() const;
 
     void draw(SDL_Plotter& g, SEASON&);
-    string scan(square[][DIM], int, int);
+    char scan(square[][DIM], int, int);
     int moveINX(square[][DIM], int, int);
     int moveINY(square[][DIM], int, int);
     void move(int, int);

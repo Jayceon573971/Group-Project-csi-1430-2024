@@ -17,6 +17,7 @@ int main(int argc, char ** argv) {
     int newC;
     int seasonCount = 0;
     SEASON season = SUMMER;
+    srand(time(NULL));
 
     //Init Data
     for (int r = 0; r < DIM; r++) {
@@ -93,7 +94,7 @@ int main(int argc, char ** argv) {
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() > RABBIT && data[r][c].getType() < SINKHOLE) {
+                    if (data[r][c].getType() > RABBIT) {
                         data[r][c].kill(data, r, c);
                     }
                 }
@@ -135,13 +136,12 @@ int main(int argc, char ** argv) {
                     data[r][c] = temp[r][c];
                     temp[r][c].setType(EMPTY);
                     data[r][c].updateHealth(-1);
-                    cout << data[r][c].getHealth() << endl;
                 }
                 data[r][c].draw(g, season);
             }
           }
           g.Sleep(300);
-          ++seasonCount;
+          seasonCount++;
 		switch(season) {
 		    case SUMMER:
 		        if (seasonCount == 15) {

@@ -95,25 +95,24 @@ void square::draw(SDL_Plotter& g, SEASON& season) {
     }
 }
 
-string square::scan(square s[][DIM], int cr, int cc) {
-    TYPE currType = s[cr][cc].getType();
+char square::scan(square s[][DIM], int cr, int cc) {
+    TYPE curr = s[cr][cc].getType();
     TYPE targetRow = EMPTY;
     TYPE targetCol = EMPTY;
     int tr;
     int tc;
-    string dir;
+    char dir;
 
     for (int r = 0; r < DIM; r++) {
         if (r != cr) {
             TYPE other = s[r][cc].getType();
-            if (other == currType) {
-                int r = rand();
-                if (r % 2 == 0) {
+            if (other == curr) {
+                if (rand() % 3 == 0) {
                     targetRow = other;
                     tr = r;
                 }
             }
-            else if ((other > targetRow) && (other < currType)) {
+            else if ((other > targetRow) && (other < curr)) {
                 targetRow = other;
                 tr = r;
             }
@@ -123,14 +122,13 @@ string square::scan(square s[][DIM], int cr, int cc) {
     for (int c = 0; c < DIM; c++) {
         if (c != cc) {
             TYPE other = s[cr][c].getType();
-            if (other == currType) {
-                int r = rand();
-                if (r % 5 == 0) {
+            if (other == curr) {
+                if (rand() % 3 == 0) {
                     targetCol = other;
                     tc  = c;
                 }
             }
-            else if ((other > targetCol) && (other < currType)) {
+            else if ((other > targetCol) && (other < curr)) {
                 targetCol = other;
                 tc = c;
             }
@@ -139,57 +137,56 @@ string square::scan(square s[][DIM], int cr, int cc) {
 
     // Move to New Row and Column if nothing is sensed
     if ((targetRow == EMPTY) && (targetCol == EMPTY)) {
-            dir = "diagonal";
+            dir = 'z';
     }
     else if (targetRow > targetCol) {
         if (tr > cr) {
-            dir = "down";
+            dir = 'd';
         }
         else {
-            dir = "up";
+            dir = 'u';
         }
     }
     else if (targetRow < targetCol) {
         if (tc > cc) {
-            dir = "right";
+            dir = 'r';
         }
         else {
-            dir = "left";
+            dir = 'l';
         }
     }
     else { // Same Type and Not EMPTY
         if(abs(tc - cc) < abs(tr - cr)) {
             if (tc > cc) {
-                dir = "right";
+                dir = 'r';
             }
             else {
-                dir = "left";
+                dir = 'l';
             }
         }
         else if (abs(tc - cc) > abs(tr - cr)) {
             if (tr > cr) {
-                dir = "down";
+                dir = 'd';
             }
             else {
-                dir = "up";
+                dir = 'u';
             }
         }
         else { // equal distance and same type
-            int r = rand();
-            if (r % 2 == 0) {
+            if (rand() % 2 == 0) {
                 if (tc > cc) {
-                    dir = "right";
+                    dir = 'r';
                 }
                 else {
-                    dir = "left";
+                    dir = 'l';
                 }
             }
             else {
                 if (tr > cr) {
-                    dir = "down";
+                    dir = 'l';
                 }
                 else {
-                    dir = "up";
+                    dir = 'l';
                 }
             }
         }
@@ -199,23 +196,24 @@ string square::scan(square s[][DIM], int cr, int cc) {
 
 int square::moveINX(square s[][DIM], int cr, int cc) {
     int newCol = cc;
-    string dir = s[cr][cc].scan(s, cr, cc);
+    char dir = s[cr][cc].scan(s, cr, cc);
 
-    if (dir == "left") {
-        newCol -= 1;
-    }
-    else if (dir == "right") {
-        newCol += 1;
-    }
-    else if (dir == "diagonal") {
-        int r = rand();
-        if (r % 2 == 0) {
+    switch (dir) {
+        case 'r':
             newCol += 1;
-        }
-        else {
-            newCol -= 1;
-        }
+            break;
+        case 'l':
+            newCol -=1;
+        case 'z':
+            if (rand() % 2 == 0) {
+                newCol += 1;
+            }
+            else {
+                newCol -= 1;
+            }
+            break;
     }
+
     if ((newCol > (DIM - 1)) || (newCol < 0)) {
         newCol = cc;
     }
@@ -227,23 +225,25 @@ int square::moveINX(square s[][DIM], int cr, int cc) {
 
 int square::moveINY(square s[][DIM], int cr, int cc) {
     int newRow = cr;
-    string dir = s[cr][cc].scan(s, cr, cc);
+    char dir = s[cr][cc].scan(s, cr, cc);
 
-    if (dir == "up") {
-        newRow -= 1;
-    }
-    else if (dir == "down") {
-        newRow += 1;
-    }
-    else if (dir == "diagonal") {
-        int r = rand();
-        if (r % 2 == 0) {
+    switch (dir) {
+        case 'd':
             newRow += 1;
-        }
-        else {
+            break;
+        case 'u':
             newRow -= 1;
-        }
+            break;
+        case 'z':
+            if (rand() % 2 == 0) {
+                newRow += 1;
+            }
+            else {
+                newRow -= 1;
+            }
+            break;
     }
+
     if ((newRow > (DIM - 1)) || (newRow < 0)) {
         newRow = cr;
     }
@@ -283,87 +283,42 @@ void square::move(int r, int c) {
 
 void square::kill(square s[][DIM], int cr, int cc) {
     TYPE curr = s[cr][cc].getType();
-    if (curr >= RABBIT && curr < SINKHOLE) {
+    if (curr >= RABBIT) {
     TYPE target = EMPTY;
     int tr = cr;
     int tc = cc;
     bool success = false;
-    if ((s[cr -1][cc + 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
-        if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
-            target = s[cr -1][cc + 1].getType();
-            tr = cr -1;
-            tc = cc + 1;
-            success = true;
+    for (int r = cr - 1; r < cr + 2; r++) {
+        for (int c = cc - 1; c < cc + 2; c++) {
+            if (r != cr && c != cc) {
+                if (r < DIM && r > 0 && c < DIM && c > 0) {
+                    TYPE other = s[r][c].getType();
+                    if (other < curr && other > target) {
+                        target = other;
+                        tr = r;
+                        tc = c;
+                        success = true;
+                    }
+                }
+            }
         }
     }
-    if ((s[cr -1][cc].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
-        if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0)) {
-            target = s[cr -1][cc].getType();
-            tr = cr -1;
-            tc = cc;
-            success = true;
-        }
-    }
-    if ((s[cr -1][cc - 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
-        if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0) && ((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
-            target = s[cr -1][cc + 1].getType();
-            tr = cr -1;
-            tc = cc - 1;
-            success = true;
-        }
-    }
-    if (s[cr][cc - 1].getType() < curr && s[cr -1][cc - 1].getType() > target) {
-        if (((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
-            target = s[cr][cc - 1].getType();
-            tr = cr;
-            tc = cc - 1;
-            success = true;
-        }
-    }
-    if (s[cr + 1][cc - 1].getType() < curr && s[cr -1][cc - 1].getType() > target) {
-        if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
-            target = s[cr -1][cc - 1].getType();
-            tr = cr + 1;
-            tc = cc - 1;
-            success = true;
-        }
-    }
-    if ((s[cr + 1][cc].getType() < curr) && (s[cr + 1][cc].getType() > target)) {
-        if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc) < (DIM - 1)) && ((cc) > 0)) {
-            target = s[cr + 1][cc].getType();
-            tr = cr -1;
-            tc = cc;
-            success = true;
-        }
-    }
-    if ((s[cr + 1][cc + 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
-        if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
-            target = s[cr -1][cc + 1].getType();
-            tr = cr + 1;
-            tc = cc + 1;
-            success = true;
-        }
-    }
-    if ((s[cr][cc + 1].getType() < curr) && (s[cr -1][cc + 1].getType() > target)) {
-        if ((cr) < (DIM - 1) && ((cr) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
-            target = s[cr -1][cc + 1].getType();
-            tr = cr;
-            tc = cc + 1;
-            success = true;
-        }
-    }
-    //cout << target << endl;
 
         if (success) {
             s[tr][tc].setType(EMPTY);
-            if (target < RABBIT) {
-                s[cr][cc].updateHealth(2);
-            }
-            else if (target == RABBIT) {
-                s[cr][cc].updateHealth(5);
-            }
-            else if (target == SNAKE) {
-                s[cr][cc].updateHealth(7);
+            switch (target) {
+                case OASIS:
+                    s[cr][cc].updateHealth(2);
+                    break;
+                case CACTUS:
+                    s[cr][cc].updateHealth(2);
+                    break;
+                case RABBIT:
+                    s[cr][cc].updateHealth(5);
+                    break;
+                case SNAKE:
+                    s[cr][cc].updateHealth(7);
+                    break;
             }
         }
     }
@@ -378,104 +333,51 @@ void square::reproduce(square s [][DIM], int cr, int cc) {
     int emptyC = cc;
     if (curr > CACTUS) {
         bool found = false;
-        if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
-            if (s[cr -1][cc + 1].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr - 1][cc + 1].getType() == EMPTY) {
-                emptyR = cr - 1;
-                emptyC = cc + 1;
-            }
-        }
-    if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0)) {
-            if (s[cr -1][cc].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr - 1][cc].getType() == EMPTY) {
-                emptyR = cr - 1;
-                emptyC = cc;
+        for (int r = cr - 1; r < cr + 2; r++) {
+            for (int c = cc - 1; c < cc + 2; c++) {
+                if (r != cr && c != cc) {
+                    if (r < DIM && r > 0 && c < DIM && c > 0) {
+                        TYPE other = s[r][c].getType();
+                        if (other == curr) {
+                            found = true;
+                        }
+                        else if (other == EMPTY) {
+                            emptyR = r;
+                            emptyC = c;
+                        }
+                    }
+                }
             }
         }
-    if ((cr - 1) < (DIM - 1) && ((cr - 1) > 0) && ((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
-            if (s[cr -1][cc - 1].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr - 1][cc - 1].getType() == EMPTY) {
-                emptyR = cr - 1;
-                emptyC = cc - 1;
-            }
-        }
-    if (((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
-            if (s[cr][cc - 1].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr][cc - 1].getType() == EMPTY) {
-                emptyR = cr;
-                emptyC = cc - 1;
-            }
-        }
-    if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc - 1) < (DIM - 1)) && ((cc - 1) > 0)) {
-            if (s[cr + 1][cc - 1].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr + 1][cc - 1].getType() == EMPTY) {
-                emptyR = cr + 1;
-                emptyC = cc - 1;
-            }
-        }
-    if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0)) {
-            if (s[cr + 1][cc].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr + 1][cc].getType() == EMPTY) {
-                emptyR = cr + 1;
-                emptyC = cc;
-            }
-        }
-    if ((cr + 1) < (DIM - 1) && ((cr + 1) > 0) && ((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
-            if (s[cr + 1][cc + 1].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr + 1][cc + 1].getType() == EMPTY) {
-                emptyR = cr + 1;
-                emptyC = cc + 1;
-            }
-        }
-    if (((cc + 1) < (DIM - 1)) && ((cc + 1) > 0)) {
-            if (s[cr][cc + 1].getType() == curr) {
-                found = true;
-            }
-            else if (s[cr][cc + 1].getType() == EMPTY) {
-                emptyR = cr;
-                emptyC = cc + 1;
-            }
-        }
-    if (found) {
-        if (curr == RABBIT) {
-            if (rand() % 6 == 0) {
-                s[emptyR][emptyC].setType(curr);
-                s[emptyR][emptyC].setHealth(10);
-            }
-        }
-        else if (curr == SNAKE) {
-            if (rand() % 12 == 0) {
-                s[emptyR][emptyC].setType(curr);
-                s[emptyR][emptyC].setHealth(10);
-            }
-        }
-        else if (curr == HAWK) {
-            if (rand() % 18 == 0) {
-                s[emptyR][emptyC].setType(curr);
-                s[emptyR][emptyC].setHealth(10);
-            }
-        else if (curr == HAWK) {
-            if (rand() %  5000 == 0) {
-                s[emptyR][emptyC].setType(curr);
+
+        if (found) {
+            switch (curr) {
+                case RABBIT:
+                    if (rand() % 6 == 0) {
+                        s[emptyR][emptyC].setType(curr);
+                        s[emptyR][emptyC].setHealth(15);
+                    }
+                    break;
+                case SNAKE:
+                    if (rand() % 12 == 0) {
+                        s[emptyR][emptyC].setType(curr);
+                        s[emptyR][emptyC].setHealth(10);
+                    }
+                    break;
+                case HAWK:
+                    if (rand() % 18 == 0) {
+                        s[emptyR][emptyC].setType(curr);
+                        s[emptyR][emptyC].setHealth(10);
+                    }
+                    break;
+                case SINKHOLE:
+                    if (rand() % 5000 == 0) {
+                        s[emptyR][emptyC].setType(curr);
+                    }
+                    break;
             }
         }
     }
-    }
-}
 }
 
 void allToDefault(square s[][DIM]) {
