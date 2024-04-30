@@ -75,7 +75,7 @@ void square::draw(SDL_Plotter& g, SEASON& season) {
             setColor(color(202, 192, 184));
             break;
         case SNAKE:
-            setColor(color(0, 0, 0));
+            setColor(color(255, 255, 0));
             break;
         case HAWK:
             setColor(color(255, 87, 51));
@@ -139,6 +139,7 @@ char square::scan(square s[][DIM], int cr, int cc) {
     if ((targetRow == EMPTY) && (targetCol == EMPTY)) {
             dir = 'z';
     }
+
     else if (targetRow > targetCol) {
         if (tr > cr) {
             dir = 'd';
@@ -183,10 +184,10 @@ char square::scan(square s[][DIM], int cr, int cc) {
             }
             else {
                 if (tr > cr) {
-                    dir = 'l';
+                    dir = 'd';
                 }
                 else {
-                    dir = 'l';
+                    dir = 'u';
                 }
             }
         }
@@ -290,7 +291,7 @@ void square::kill(square s[][DIM], int cr, int cc) {
     bool success = false;
     for (int r = cr - 1; r < cr + 2; r++) {
         for (int c = cc - 1; c < cc + 2; c++) {
-            if (r != cr && c != cc) {
+            if (r != cr || c != cc) {
                 if (r < DIM && r > 0 && c < DIM && c > 0) {
                     TYPE other = s[r][c].getType();
                     if (other < curr && other > target) {
@@ -303,7 +304,6 @@ void square::kill(square s[][DIM], int cr, int cc) {
             }
         }
     }
-
         if (success) {
             s[tr][tc].setType(EMPTY);
             switch (target) {

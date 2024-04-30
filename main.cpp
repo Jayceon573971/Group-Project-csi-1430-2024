@@ -17,7 +17,9 @@ int main(int argc, char ** argv) {
     int newC;
     int seasonCount = 0;
     SEASON season = SUMMER;
-    srand(time(NULL));
+    int seedValue = time(0);
+    seedValue -= seedValue % 300;
+    srand(seedValue);
 
     //Init Data
     for (int r = 0; r < DIM; r++) {
@@ -87,29 +89,26 @@ int main(int argc, char ** argv) {
 		else if (started) {
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE && data[r][c].getHealth() == 0) {
-                        data[r][c].setType(EMPTY);
+                    if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE) {
+                        if (data[r][c].getHealth() == 0) {
+                            data[r][c].reset();
+                        }
                     }
                 }
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() > RABBIT) {
-                        data[r][c].kill(data, r, c);
-                    }
+                    data[r][c].kill(data, r, c);
                 }
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() >= RABBIT) {
-                        data[r][c].reproduce(data, r, c);
-                    }
+                    data[r][c].reproduce(data, r, c);
                 }
             }
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                        if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE) {
-                        //cout << data[r][c].scan(data, r, c) << endl;
+                    if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE) {
                         newR = data[r][c].moveINY(data, r, c);
                         newC = data[r][c].moveINX(data, r, c);
 
@@ -125,7 +124,7 @@ int main(int argc, char ** argv) {
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     if(data[r][c].getType() >= RABBIT) {
-                        data[r][c].setType(EMPTY);
+                        data[r][c].reset();
                         data[r][c].draw(g, season);
                     }
                 }
@@ -150,7 +149,7 @@ int main(int argc, char ** argv) {
                     for (int r = 0; r < DIM; r++) {
                         for (int c = 0; c < DIM; c++) {
                             if (data[r][c].getType() == CACTUS) {
-                                data[r][c].setType(EMPTY);
+                                data[r][c].reset();
                             }
                         }
                     }
@@ -162,7 +161,7 @@ int main(int argc, char ** argv) {
                     for (int r = 0; r < DIM; r++) {
                         for (int c = 0; c < DIM; c++) {
                             if (data[r][c].getType() == OASIS) {
-                                data[r][c].setType(EMPTY);
+                                data[r][c].reset();
                             }
                         }
                     }
