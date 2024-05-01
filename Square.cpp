@@ -97,20 +97,19 @@ void square::draw(SDL_Plotter& g, SEASON& season) {
 
 char square::scan(square s[][DIM], int cr, int cc) {
     TYPE curr = s[cr][cc].getType();
+    char dir;
     TYPE targetRow = EMPTY;
     TYPE targetCol = EMPTY;
     int tr;
     int tc;
-    char dir;
+    TYPE other;
 
     for (int r = 0; r < DIM; r++) {
         if (r != cr) {
-            TYPE other = s[r][cc].getType();
-            if (other == curr) {
-                if (rand() % 3 == 0) {
-                    targetRow = other;
-                    tr = r;
-                }
+            other = s[r][cc].getType();
+            if (other == curr && (rand() % 3 == 0)) {
+                targetRow = other;
+                tr = r;
             }
             else if ((other > targetRow) && (other < curr)) {
                 targetRow = other;
@@ -121,12 +120,10 @@ char square::scan(square s[][DIM], int cr, int cc) {
 
     for (int c = 0; c < DIM; c++) {
         if (c != cc) {
-            TYPE other = s[cr][c].getType();
-            if (other == curr) {
-                if (rand() % 3 == 0) {
-                    targetCol = other;
-                    tc  = c;
-                }
+            other = s[cr][c].getType();
+            if (other == curr && (rand() % 3 == 0)) {
+                targetCol = other;
+                tc  = c;
             }
             else if ((other > targetCol) && (other < curr)) {
                 targetCol = other;
@@ -137,9 +134,8 @@ char square::scan(square s[][DIM], int cr, int cc) {
 
     // Move to New Row and Column if nothing is sensed
     if ((targetRow == EMPTY) && (targetCol == EMPTY)) {
-            dir = 'z';
+        dir = 'z';
     }
-
     else if (targetRow > targetCol) {
         if (tr > cr) {
             dir = 'd';
@@ -284,60 +280,59 @@ void square::move(int r, int c) {
 
 void square::kill(square s[][DIM], int cr, int cc) {
     TYPE curr = s[cr][cc].getType();
-    if (curr >= RABBIT) {
     TYPE target = EMPTY;
+    TYPE other;
     int tr = cr;
     int tc = cc;
     bool success = false;
-    for (int r = cr - 1; r < cr + 2; r++) {
-        for (int c = cc - 1; c < cc + 2; c++) {
-            if (r != cr || c != cc) {
-                if (r < DIM && r > 0 && c < DIM && c > 0) {
-                    TYPE other = s[r][c].getType();
-                    if (other < curr && other > target) {
-                        target = other;
-                        tr = r;
-                        tc = c;
-                        success = true;
+    if (curr >= RABBIT) {
+        for (int r = cr - 1; r < cr + 2; r++) {
+            for (int c = cc - 1; c < cc + 2; c++) {
+                if (r != cr || c != cc) {
+                    if (r < DIM && r > 0 && c < DIM && c > 0) {
+                        other = s[r][c].getType();
+                        if (other < curr && other > target) {
+                            target = other;
+                            tr = r;
+                            tc = c;
+                            success = true;
+                        }
                     }
                 }
             }
         }
-    }
         if (success) {
             s[tr][tc].setType(EMPTY);
             switch (target) {
                 case OASIS:
-                    s[cr][cc].updateHealth(2);
+                    s[cr][cc].updateHealth(4);
                     break;
                 case CACTUS:
-                    s[cr][cc].updateHealth(2);
-                    break;
-                case RABBIT:
                     s[cr][cc].updateHealth(5);
                     break;
+                case RABBIT:
+                    s[cr][cc].updateHealth(9);
+                    break;
                 case SNAKE:
-                    s[cr][cc].updateHealth(7);
+                    s[cr][cc].updateHealth(11);
                     break;
             }
         }
     }
 }
-void square::reset() {
-    setHealth(0);
-    setType(EMPTY);
-}
+
 void square::reproduce(square s [][DIM], int cr, int cc) {
     TYPE curr = s[cr][cc].getType();
     int emptyR = cr;
     int emptyC = cc;
+    bool found = false;
+    TYPE other;
     if (curr > CACTUS) {
-        bool found = false;
         for (int r = cr - 1; r < cr + 2; r++) {
             for (int c = cc - 1; c < cc + 2; c++) {
                 if (r != cr && c != cc) {
                     if (r < DIM && r > 0 && c < DIM && c > 0) {
-                        TYPE other = s[r][c].getType();
+                        other = s[r][c].getType();
                         if (other == curr) {
                             found = true;
                         }
@@ -353,21 +348,21 @@ void square::reproduce(square s [][DIM], int cr, int cc) {
         if (found) {
             switch (curr) {
                 case RABBIT:
-                    if (rand() % 6 == 0) {
+                    if (rand() % 4 == 0) {
                         s[emptyR][emptyC].setType(curr);
-                        s[emptyR][emptyC].setHealth(15);
+                        s[emptyR][emptyC].setHealth(20);
                     }
                     break;
                 case SNAKE:
-                    if (rand() % 12 == 0) {
+                    if (rand() % 5 == 0) {
                         s[emptyR][emptyC].setType(curr);
-                        s[emptyR][emptyC].setHealth(10);
+                        s[emptyR][emptyC].setHealth(30);
                     }
                     break;
                 case HAWK:
-                    if (rand() % 18 == 0) {
+                    if (rand() % 6 == 0) {
                         s[emptyR][emptyC].setType(curr);
-                        s[emptyR][emptyC].setHealth(10);
+                        s[emptyR][emptyC].setHealth(40);
                     }
                     break;
                 case SINKHOLE:
@@ -376,6 +371,18 @@ void square::reproduce(square s [][DIM], int cr, int cc) {
                     }
                     break;
             }
+        }
+    }
+}
+
+void square::reset() {
+    setHealth(0);
+    setType(EMPTY);
+}
+void square::die() {
+    if (getType() >= RABBIT && getType() < SINKHOLE) {
+        if (getHealth() == 0) {
+            reset();
         }
     }
 }

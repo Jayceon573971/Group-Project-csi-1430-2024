@@ -8,6 +8,7 @@ using namespace std;
 
 int main(int argc, char ** argv) {
     TYPE type;
+    TYPE curr;
     SDL_Plotter g(SIZE,SIZE);
     grid _grid(SIZE, SIZE, SIDE, color(0,0,0));
     bool started = false;
@@ -30,7 +31,7 @@ int main(int argc, char ** argv) {
     }
 
     while (!g.getQuit()) {
-		if(g.kbhit()){
+        if(g.kbhit()){
             switch(toupper(g.getKey())) {
                 case 'E':
                     type = EMPTY;
@@ -67,19 +68,20 @@ int main(int argc, char ** argv) {
 
 		if(!started){
 		    if (g.mouseClick()) {
-		        point p = (g.getMouseClick());
+                point p = (g.getMouseClick());
 		        data[p.y/SIDE][p.x/SIDE].setType(type);
 		    }
+
 		    for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     if (data[r][c].getType() == RABBIT) {
-                        data[r][c].setHealth(17);
+                        data[r][c].setHealth(30);
                     }
                     else if (data[r][c].getType() == SNAKE) {
-                        data[r][c].setHealth(19);
+                        data[r][c].setHealth(40);
                     }
                     else if (data[r][c].getType() == HAWK) {
-                        data[r][c].setHealth(21);
+                        data[r][c].setHealth(50);
                     }
                     data[r][c].draw(g, season);
                 }
@@ -89,31 +91,30 @@ int main(int argc, char ** argv) {
 		else if (started) {
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE) {
-                        if (data[r][c].getHealth() == 0) {
-                            data[r][c].reset();
-                        }
-                    }
+                    data[r][c].die();
                 }
             }
+
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     data[r][c].kill(data, r, c);
                 }
             }
+
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     data[r][c].reproduce(data, r, c);
                 }
             }
+
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if (data[r][c].getType() >= RABBIT && data[r][c].getType() < SINKHOLE) {
-                        newR = data[r][c].moveINY(data, r, c);
-                        newC = data[r][c].moveINX(data, r, c);
-
-                        temp[newR][newC] = data[r][c];
-                        temp[newR][newC].move(newR, newC);
+                    curr = data[r][c].getType();
+                        if (curr >= RABBIT && curr < SINKHOLE) {
+                            newR = data[r][c].moveINY(data, r, c);
+                            newC = data[r][c].moveINX(data, r, c);
+                            temp[newR][newC] = data[r][c];
+                            temp[newR][newC].move(newR, newC);
                         }
                         else if (data[r][c].getType() > EMPTY) {
                             temp[r][c] = data[r][c];
@@ -121,93 +122,101 @@ int main(int argc, char ** argv) {
                         }
                 }
             }
+
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
-                    if(data[r][c].getType() >= RABBIT) {
+                    curr = data[r][c].getType();
+                    if(curr >= RABBIT) {
                         data[r][c].reset();
                         data[r][c].draw(g, season);
                     }
                 }
             }
-          for (int r = 0; r < DIM; r++) {
-            for (int c = 0; c < DIM; c++) {
-                if (temp[r][c].getType() >= RABBIT) {
-                    data[r][c] = temp[r][c];
-                    temp[r][c].setType(EMPTY);
-                    data[r][c].updateHealth(-1);
-                }
-                data[r][c].draw(g, season);
-            }
-          }
-          g.Sleep(300);
-          seasonCount++;
-		switch(season) {
-		    case SUMMER:
-		        if (seasonCount == 15) {
-                    season = FALL;
-                    seasonCount = 0;
-                    for (int r = 0; r < DIM; r++) {
-                        for (int c = 0; c < DIM; c++) {
-                            if (data[r][c].getType() == CACTUS) {
-                                data[r][c].reset();
-                            }
-                        }
+            for (int r = 0; r < DIM; r++) {
+                for (int c = 0; c < DIM; c++) {
+                    if (temp[r][c].getType() >= RABBIT) {
+                        data[r][c] = temp[r][c];
+                        temp[r][c].setType(EMPTY);
+                        data[r][c].updateHealth(-1);
                     }
-		        }
-            case FALL:
-                if (seasonCount == 15) {
-                    season = WINTER;
-                    seasonCount = 0;
-                    for (int r = 0; r < DIM; r++) {
-                        for (int c = 0; c < DIM; c++) {
-                            if (data[r][c].getType() == OASIS) {
-                                data[r][c].reset();
-                            }
-                        }
-                    }
-		        }
-            case WINTER:
-                if (seasonCount == 15) {
-                    season = SPRING;
-                    seasonCount = 0;
-                    for (int r = 0; r < DIM; r++) {
-                        for (int c = 0; c < DIM; c++) {
-                            if (data[r][c].getType() == EMPTY) {
-                                if(rand()%50 == 0)
-                                    data[r][c].setType(OASIS);
-                            }
-                        }
-                    }
-		        }
-            case SPRING:
-                if (seasonCount == 15) {
-                    season = SUMMER;
-                    seasonCount = 0;
-                    for (int r = 0; r < DIM; r++) {
-                        for (int c = 0; c < DIM; c++) {
-                            if (data[r][c].getType() == EMPTY) {
-                                if(rand()%50 == 0)
-                                    data[r][c].setType(CACTUS);
-                            }
-                        }
-                    }
-		        }
-		}
-		for (int r = 0; r < DIM; r++) {
-            for (int c = 0; c < DIM; c++) {
-                if (rand()%1000000 == 0) {
-                    if (r < (DIM - 1) && (r > 0) && (c < (DIM - 1)) && (c > 0)) {
-                        data[r-1][c].setType(SINKHOLE);
-                        data[r-1][c+1].setType(SINKHOLE);
-                        data[r][c+1].setType(SINKHOLE);
-                        data[r][c].setType(SINKHOLE);
-                        cout << "ND" << endl;
-                    }
+                    data[r][c].draw(g, season);
                 }
             }
-		}
-		}
+            g.Sleep(300);
+            seasonCount++;
+		    switch(season) {
+                case SUMMER:
+		            if (seasonCount == 15) {
+                        season = FALL;
+                        seasonCount = 0;
+                        for (int r = 0; r < DIM; r++) {
+                            for (int c = 0; c < DIM; c++) {
+                                if (data[r][c].getType() == CACTUS) {
+                                    data[r][c].reset();
+                                }
+                            }
+                        }
+		            }
+		            break;
+                case FALL:
+                    if (seasonCount == 15) {
+                        season = WINTER;
+                        seasonCount = 0;
+                        for (int r = 0; r < DIM; r++) {
+                            for (int c = 0; c < DIM; c++) {
+                                if (data[r][c].getType() == OASIS) {
+                                    data[r][c].reset();
+                                }
+                            }
+                        }
+		            }
+		            break;
+                case WINTER:
+                    if (seasonCount == 15) {
+                        season = SPRING;
+                        seasonCount = 0;
+                        for (int r = 0; r < DIM; r++) {
+                            for (int c = 0; c < DIM; c++) {
+                                if (data[r][c].getType() == EMPTY) {
+                                    if(rand()%50 == 0)
+                                        data[r][c].setType(OASIS);
+                                }
+                            }
+                        }
+		            }
+		            break;
+                case SPRING:
+                    if (seasonCount == 15) {
+                        season = SUMMER;
+                        seasonCount = 0;
+                        for (int r = 0; r < DIM; r++) {
+                            for (int c = 0; c < DIM; c++) {
+                                if (data[r][c].getType() == EMPTY) {
+                                    if(rand()%50 == 0)
+                                        data[r][c].setType(CACTUS);
+                                }
+                            }
+                        }
+		            }
+		            break;
+            }
 
+            for (int r = 0; r < DIM; r++) {
+                for (int c = 0; c < DIM; c++) {
+                    if (rand() % 1000000 == 0) {
+                        if (r < (DIM - 1) && (r > 0)) {
+                            if ((c < (DIM - 1)) && (c > 0)) {
+                                data[r-1][c].setType(SINKHOLE);
+                                data[r-1][c+1].setType(SINKHOLE);
+                                data[r][c+1].setType(SINKHOLE);
+                                data[r][c].setType(SINKHOLE);
+                                cout << "ND" << endl;
+                            }
+                        }
+                    }
+                }
+            }
+		}
 		_grid.draw(g);
 		g.update();
     }

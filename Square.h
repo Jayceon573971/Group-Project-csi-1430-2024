@@ -43,6 +43,7 @@ public:
     void kill(square[][DIM], int, int);
     void reproduce(square[][DIM], int, int);
     void reset();
+    void die();
 };
 
 void allToDefault(square s[][DIM]);
