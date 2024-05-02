@@ -1,6 +1,6 @@
 EcoSim Manual
-Desert Edition
-EcoSim: Desert Edition introduces the user to a barren, desert landscape, absent of life. Our user-friendly interface allows the user to modify the landscape, including the addition of organisms such as cacti, rabbits, snakes, and hawks, as well as introducing oasis, all essential for a complete ecosystem. 
+Dune Part 2.5
+EcoSim: Dune Part 2.5 introduces the user to a barren, desert landscape, absent of life. Our user-friendly interface allows the user to modify the landscape, including the addition of organisms such as cacti, rabbits, snakes, and hawks, as well as introducing oasis, all essential for a complete ecosystem. 
 
 
 * Set Up
