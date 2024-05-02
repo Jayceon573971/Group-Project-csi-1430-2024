@@ -70,17 +70,6 @@ EcoSim: Desert Edition introduces the user to a barren, desert landscape, absent
 *The natural disaster has a one in a million chance of spawning.
    * Sinkhole  – Sinkhole spawns in a random location on the grid and kills everything in a two square radius. The sinkhole has a one in five-thousand chance of expanding. This causes more sand to sink in the area and kill other organisms.
 
-
-
-
-
-
-
-
-
-
-
-
 ________________
 
 
