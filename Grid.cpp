@@ -38,9 +38,9 @@ void grid::draw(SDL_Plotter& g) {
     int maxCol = g.getCol();
 
     for (int c = 0; c < col; c++) {
-        drawLine(c*size, 0, c*size, maxRow - 1, _color.R, _color.G, _color.B, g);
+        drawLine(c*size, 0, c*size, (maxRow - 1), _color.R, _color.G, _color.B, g);
     }
     for (int r = 0; r < row; r++) {
-        drawLine(0, r*size, maxCol - 1, r*size, _color.R, _color.G, _color.B, g);
+        drawLine(0, r*size, (maxCol - 1), r*size, _color.R, _color.G, _color.B, g);
     }
 }

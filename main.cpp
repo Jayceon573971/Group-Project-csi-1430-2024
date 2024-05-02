@@ -1,3 +1,13 @@
+/*
+* Authors: Colin Strout, Caleb Herron, Joseph Chen, Jay Chou, Josiah Lockette
+* Assignment Title: Dune Part 2.5
+* Assignment Description: This is a ecosystem simulation game that simulates
+* an ecosystem in the desert
+* Due Date: 5/2/2024
+* Date Created: 4/3/2024
+* Date Last Modified: 5/2/2024
+*/
+
 #include <iostream>
 #include <cmath>
 #include <ctime>
@@ -7,6 +17,7 @@
 using namespace std;
 
 int main(int argc, char ** argv) {
+    // Data Abstraction: declare variables for simulation
     TYPE type;
     TYPE curr;
     SDL_Plotter g(SIZE,SIZE);
@@ -22,7 +33,7 @@ int main(int argc, char ** argv) {
     seedValue -= seedValue % 300;
     srand(seedValue);
 
-    //Init Data
+    //Initializes Data, all squares in the data have a given
     for (int r = 0; r < DIM; r++) {
         for (int c = 0; c < DIM; c++) {
             data[r][c].setCol(c);
@@ -30,6 +41,7 @@ int main(int argc, char ** argv) {
         }
     }
 
+    // Input: Get's User Key Input
     while (!g.getQuit()) {
         if(g.kbhit()){
             switch(toupper(g.getKey())) {
@@ -68,6 +80,8 @@ int main(int argc, char ** argv) {
 
 		if(!started){
 		    if (g.mouseClick()) {
+                // Sets type of square where cursor is clicked
+                // to the type selected
                 point p = (g.getMouseClick());
 		        data[p.y/SIDE][p.x/SIDE].setType(type);
 		    }
@@ -88,7 +102,10 @@ int main(int argc, char ** argv) {
 		    }
 		}
 
+		// Process
 		else if (started) {
+            // Check's if a given organism dies from hunger, is killed from an
+            // organism, or if it reproduces
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     data[r][c].die();
@@ -107,6 +124,9 @@ int main(int argc, char ** argv) {
                 }
             }
 
+            // Copies every type into temporary 2D array unless
+            // the square is empty, including simulated movement
+            // for organisms that can move
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     curr = data[r][c].getType();
@@ -123,6 +143,8 @@ int main(int argc, char ** argv) {
                 }
             }
 
+            // Makes the type of every organism in the original
+            // grid empty, as this was their previous location
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     curr = data[r][c].getType();
@@ -132,6 +154,9 @@ int main(int argc, char ** argv) {
                     }
                 }
             }
+            // Copies the new location of every organism
+            // into the original 2D array and decrements
+            // their health by 1
             for (int r = 0; r < DIM; r++) {
                 for (int c = 0; c < DIM; c++) {
                     if (temp[r][c].getType() >= RABBIT) {
@@ -144,6 +169,8 @@ int main(int argc, char ** argv) {
             }
             g.Sleep(300);
             seasonCount++;
+		    // Changes season based on season count
+		    // which changes every 15 loops
 		    switch(season) {
                 case SUMMER:
 		            if (seasonCount == 15) {
@@ -217,6 +244,7 @@ int main(int argc, char ** argv) {
                 }
             }
 		}
+		// Output: Displays updated 2-D array to the plotter screen
 		_grid.draw(g);
 		g.update();
     }

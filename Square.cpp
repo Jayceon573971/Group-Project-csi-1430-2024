@@ -104,9 +104,11 @@ char square::scan(square s[][DIM], int cr, int cc) {
     int tc;
     TYPE other;
 
+    // Searches for every square in it's row and column except itself
     for (int r = 0; r < DIM; r++) {
         if (r != cr) {
             other = s[r][cc].getType();
+            // Random chance the target will be another one of itself
             if (other == curr && (rand() % 3 == 0)) {
                 targetRow = other;
                 tr = r;
@@ -348,19 +350,19 @@ void square::reproduce(square s [][DIM], int cr, int cc) {
         if (found) {
             switch (curr) {
                 case RABBIT:
-                    if (rand() % 4 == 0) {
+                    if (rand() % 5 == 0) {
                         s[emptyR][emptyC].setType(curr);
                         s[emptyR][emptyC].setHealth(20);
                     }
                     break;
                 case SNAKE:
-                    if (rand() % 5 == 0) {
+                    if (rand() % 6 == 0) {
                         s[emptyR][emptyC].setType(curr);
                         s[emptyR][emptyC].setHealth(30);
                     }
                     break;
                 case HAWK:
-                    if (rand() % 6 == 0) {
+                    if (rand() % 7 == 0) {
                         s[emptyR][emptyC].setType(curr);
                         s[emptyR][emptyC].setHealth(40);
                     }
