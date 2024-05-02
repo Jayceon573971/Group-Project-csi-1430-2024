@@ -18,8 +18,9 @@ void drawLine(int x1, int y1, int x2, int y2, int R, int G, int B, SDL_Plotter& 
 			y = m * x + b;
 			g.plotPixel(x, y, R,G,B);
 		}
-    }else{
-    	for(int y = min(y1,y2); y <= max(y1,y2); y++){
+    }
+    else{
+        for(int y = min(y1,y2); y <= max(y1,y2); y++){
     		g.plotPixel(x1, y, R,G,B);
     	}
     }
