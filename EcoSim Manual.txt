@@ -1,0 +1,118 @@
+EcoSim Manual
+Desert Edition
+EcoSim: Desert Edition introduces the user to a barren, desert landscape, absent of life. Our user-friendly interface allows the user to modify the landscape, including the addition of organisms such as cacti, rabbits, snakes, and hawks, as well as introducing oasis, all essential for a complete ecosystem. 
+
+
+* Set Up
+   * The user is presented with a 25 x 25 grid of sand (EMPTY) squares. The user is able to use the mouse click function and insert organisms and oasis, as well as reset any square to EMPTY once more. The user can then start the simulation and watch ecosystem interactions. 
+   * Mouse Click - Users can use the mouse to place whatever input key is set.
+   * Keyboard Hit - Users can use the keyboard to select the input key they wish to use (See Input Keys).
+
+
+* Input Keys
+* Input keys must be hit before selecting a square with a mouse click.
+   * E - Empty, hitting the key ‘E’, allows the user to click a square with the mouse and set the selected square to empty. This is great for mistaken placements of other squares.
+   * O - Oasis, hitting the key ‘O’, allows the user to click a square with the mouse and set the selected square to water, this provides an oasis for all of the animals to drink.
+   * C - Cactus, hitting the key ‘C’, allows the user to click a square with the mouse and set the selected square to a cactus. Most animals rely on this for their food to eat.
+   * R - Rabbit, hitting the key ‘R’, allows the user to click a square with the mouse and set the selected square to a rabbit. Note, rabbits are usually large in numbers within ecosystems.
+   * S - Snake, hitting the key ‘S’, allows the user to click a square with the mouse and set the selected square to a snake. 
+   * H - Hawk, hitting the key ‘H’, allows the user to click a square with the mouse and set the selected square to a hawk. Hawks are at the top of the food chain, be wise with placements.
+   * D - Delete, hitting the key ‘D’, allows the user to reset all of the squares to empty. This is good if you don’t like your current ecosystem and want to reset it without clicking ‘E’ for each changed square.
+   * P - Play, hitting the key ‘P’, allows the user to run the simulation of the ecosystem they have created. By starting the simulation, each organism will move based on their interactions with other organisms and need for nutrients (See Movement).
+
+
+* Health
+*Health is predetermined by each organism. For motile organisms, health is determined by how many squares it moves. Once an organism moves its allotted squares and still does not encounter food, it will die. If food is encountered and consumed, health is reset. 
+   * Oasis - The health doesn’t deplete when animals drink from it because it is a watering hole. Oasis will not dry out until the season changes to summer or a natural disaster occurs. 
+   * Cactus - The health doesn’t deplete for a cactus. This is because cacti don’t require many nutrients except for the sun and nutrients through the sand.
+   * Rabbit - Set to 30. If the rabbit does not encounter its food source after moving 30 squares, it will die.
+   * Snake - Set to 40. If the snake does not encounter its food source after moving 40 squares, it will die.
+   * Hawk - Set to 50. If the hawk does not encounter its food source after moving 50 squares, it will die.
+
+
+* Movement
+   * Oasis, Cactus - Both are stationary and do not move.
+   * Rabbit, Snake, Hawk - These organisms are motile. If the organism sees something in its row it can consume, it will move towards it. If it sees nothing, it will move diagonally to the top/right one square to search a new row and column. 
+
+
+* Food Chain
+        *To simulate real-life prey-predator dynamics, hunting probability is implemented among motile organisms. For example, just because a rabbit and hawk are next to each other,  does not mean the rabbit immediately dies. There is a chance prey escapes pursuit.
+   * Oasis - Oasis provides a source of life for all animals. Though they can survive extended periods of time without it, all organisms eventually need it though. 
+   * Cactus - Cacti are primary producers for the food chain. Without cacti, rabbits starve and die, followed with snakes, then hawks. Cacti have large amounts of water in them as well, so they serve both as water and food source. 
+   * Rabbit - Rabbits can eat cacti and drink from an oasis. Rabbits are hunted by snakes and hawks. As long as the rabbit is located in a square next to a snake or hawk, there is a chance it will get eaten.
+   * Snake - Snakes can drink from the oasis and eat rabbits. Snakes are hunted by hawks. As long as the snake is in a square next to the hawk, there is a chance it will get eaten. 
+   * Hawk - Hawks have the highest trophic level. Hawks can drink from the oasis as well as eat rabbits and snakes. 
+
+
+
+* Reproduction
+   * Each motile organism checks every row and column if there is the same kind of itself. If there is, they move to each other. 
+   * Once these two organisms are close to each other, they each have a random chance to reproduce, with rabbits being the most likely. If reproduction is possible, the babies have lower health, and it increases overtime as they grow.
+
+
+* Weather
+*Weather, indicated by the color of the sand, is associated with the season. Each season is 15 clicks long, aka once each organism moves 15 times, the season progresses.
+   * Sunny - Sunny weather, associated with the summer season and the default starting weather, introduces intense heat. Sand color is default. 
+   * Cloudy - Cloudy weather, associated with the fall season, introduces darker sand because of lack of sunlight. 
+   * Snowing - Snowy weather, associated with the winter season, changes the sand color to white because of a layer of snow that covers it. It also blocks out the sun.
+   * Spring - Spring weather, associated with the spring season, melts the snow into the sand.The sand is the darkest here because water is seeping into the ground.
+
+
+* Season
+*Seasons are indicated by the presence/absence of oases/cacti based off of the weather. So, each season is also 15 clicks, and each weather is associated with its same season.
+   * Summer - Summer season is the default season and introduces intense heat. Since cacti thrive in the sun, they reappear. 
+   * Fall - Fall season is next, and with cloudy weather, not as much sun is able to penetrate. Because the sun is not a factor anymore, cactus die off
+   * Winter - Winter season completely blocks the sun out and introduces snowy weather. Cacti still can not survive and oases dry up. 
+   * Spring - Spring season returns the presence of the sun, which is not strong enough to dry out anything, so oases appear once more. 
+
+
+* Natural Disaster
+*The natural disaster has a one in a million chance of spawning.
+   * Sinkhole  – Sinkhole spawns in a random location on the grid and kills everything in a two square radius. The sinkhole has a one in five-thousand chance of expanding. This causes more sand to sink in the area and kill other organisms.
+
+________________
+
+
+EcoSim Documentation
+* Set Up
+   * Utilizing SDL_Plotter to output a 25 x 25 grid is a two-dimensional array s[r][c]. Rows (r) is the y axis and columns (c) is the x axis.
+   * (0, 0) is located in the top left, essentially the output grid is Quadrant IV of a typical graphical grid
+   * Each square in the grid is initially set to EMPTY, which is the color of presumed desert sand
+
+
+* Input Keys
+   * Through the definition of an enumerated data type each organism is given a value: (EMPTY, 0), (OASIS, 1), (CACTUS, 2), (RABBIT, 3), (SNAKE, 4), (HAWK, 5). 
+   * Using the values from the enumerator, we put them all into a switch statement, each key that can be hit is represented as a case in the switch statement. 
+* Health
+   * The kill(square, int, int) is a nested for loop that scans the rows and columns (diagonally also) by checking each column in each row starting from the top row
+(r = cr - 1, r < cr + 2 && c = cc-1, c < cc + 2)
+   * As long as the r is not equal to cr or c is not equal to cc, and if the squares are in DIM and greater than 0 (logic of the grid, quadrant 4), and the TYPE variable other is greater than the current or the current is greater than the other, than the target = other, and turns a boolean variable success into true. 
+   * An if statement, if success == true, will now update health of the organism attacking, and the victim organism is erased. updateHealth(int) function is called.
+      * Snake - if snake is eaten, health is increased 11
+      * Rabbit - if rabbit is eaten, health in increased 9
+      * Cactus - if cactus is eaten, health is increased 5
+      * Oasis - if oasis is eaten, health is increased 4
+   * * Movement
+   * Using the scan(square, int, int) function, the motile organism occupying the current square checks its current row and column. If there is the same type of organism for reproduction or a different organism suitable for consumption, it sets variable TYPE targetRow or targetCol to TYPE other. If the entire row is EMPTY, then the organism will move diagonally if tc > cr or tc > cc.
+   * If the target square is not empty and is the same TYPE, it will either move towards it right or left, or down or up (random if the distance is the same and there is a same TYPE in the column and row)
+   * Scan function sets the direction, but the organism actually moves in the moveINX and moveINY functions where the direction string variable dir moves the organism based off the set grid
+   * The move function move(int, int) sets the current square to EMPTY or if another organism moves into it by changing the type, and sets the new square which the organism moved into to that TYPE. The square is not really moving, TYPES are just changing
+
+
+* Food Chain
+   * All organisms are set in an enumerated data type, where the higher the associated number, the higher it is on the food chain. Hawk is the highest in the food chain, so its enumeration is 4, while rabbit is 2, which is why hawk has the chance to eliminate the rabbit.
+   * Some organisms have special rules. Snakes and Hawks cannot eat cactus, so they do not have the power to eliminate the cactus from the map. 
+* Reproduction
+   * Reproduction is a counterclockwise method when the organism checks every square around it in a counterclockwise direction (function reproduce(square, int, int)
+   * Rabbit - rand() %5 chance of reproduction
+   * Snake - rand(), %6 chance of reproduction
+   * Hawk - rand() %7 chance of reproduction
+   * Health for all babies is set to 10
+* Weather & Season
+   * Season is an enumerated  data type that contains SUMMER, FALL, WINTER, and SPRING. In the square::draw function definition, SEASON is a pass by reference variable and if the case is EMPTY (no present organism or oasis), each season is set to a specific color, which is to characterize the weather.
+   * In main.cpp, the integer variable seasonCount is initialized to 0, and the initial season is SUMMER. Once the simulation is started, after a certain amount of clicks, the weather/season is redrawn.
+   * Each time all organisms move, the seasonCount is incremented. Once it reaches 15, it resets, and the next weather is set.
+
+
+* Natural Disaster
+   * Another TYPE called SINKHOLE takes precedence over all other organisms and enumerated types. Using the rand syntax and reproduction function (but the sinkhole is not actually reproducing) there is a rand()%5000 chance that the sinkhole expands. Any animal entering the two block radius around the sinkhole will.

@@ -1,6 +1,15 @@
+/*
+* Authors: Collin Strout, Caleb Herron, Joseph Chen, Jay Chou, Josiah Lockette
+* Assignment Title: Dune Part 2.5
+* Assignment Description: This file Defines functions in line declared
+*    in Line.h
+* Due Date: 5/2/24
+* Date Created: 4/3/24
+* Date Last Modified: 5/2/24
+*/
+
 #include "line.h"
-void drawLine(int x1, int y1, int x2, int y2, int R, int G, int B,
-SDL_Plotter& g){
+void drawLine(int x1, int y1, int x2, int y2, int R, int G, int B, SDL_Plotter& g){
 	double m = slope(x1,y1,x2,y2);
 	double b = y_intercept(x1,y1,x2,y2);
 	int y;
@@ -9,8 +18,9 @@ SDL_Plotter& g){
 			y = m * x + b;
 			g.plotPixel(x, y, R,G,B);
 		}
-    }else{
-    	for(int y = min(y1,y2); y <= max(y1,y2); y++){
+    }
+    else{
+        for(int y = min(y1,y2); y <= max(y1,y2); y++){
     		g.plotPixel(x1, y, R,G,B);
     	}
     }

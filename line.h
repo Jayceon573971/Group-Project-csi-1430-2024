@@ -7,9 +7,11 @@
 * Date Created: 4/3/24
 * Date Last Modified: 5/2/24
 */
+
 #ifndef LINE_H_INCLUDED
 #define LINE_H_INCLUDED
 #include "SDL_Plotter.h"
+
 /*
 * description: plots pixels in a line
 * return: none
@@ -17,8 +19,7 @@
 *               RGB and g (SDL Plotter) are given
 * postcondition: line is drawn
 */
-void drawLine(int x1, int y1, int x2, int y2, int R, int G, int B,
-SDL_Plotter& g);
+void drawLine(int x1, int y1, int x2, int y2, int R, int G, int B, SDL_Plotter& g);
 
 /*
 * description: returns slope from two given points
