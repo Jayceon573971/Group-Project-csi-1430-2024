@@ -1,4 +1,13 @@
 /*
+* Authors: Collin Strout, Caleb Herron, Joseph Chen, Jay Chou, Josiah Lockette
+* Assignment Title: Dune Part 2.5
+* Assignment Description: This file declares functions in Line defined
+*    in Line.cpp
+* Due Date: 5/2/24
+* Date Created: 4/3/24
+* Date Last Modified: 5/2/24
+*/
+/*
  * brief Constructor for the grid class.
  *
  * This constructor initializes a grid object with the specified number of rows, columns,
