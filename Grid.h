@@ -26,7 +26,8 @@ public:
     /*
      * brief Constructor for the grid class.
      *
-     * This constructor initializes a grid object with the specified number of rows, columns,
+     * This constructor initializes a grid object with the 
+     specified number of rows, columns,
      * size of each cell, and color of the grid lines.
      *
      * param r Number of rows in the grid.
